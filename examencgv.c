@@ -6,18 +6,18 @@
 #include <GL/glu.h>
 #include <GL/glut.h>
 
-GLint ancho = 500;
-GLint alto = 500;
-GLint vel2=5;
+GLint ancho = 800;
+GLint alto = 800;
+GLfloat vel2=5;
+GLint vel = 90;
 GLint hazPerspectiva = 0;
 GLint rotarFiguraCompleta = 0;
-GLint alambre = 0;
 GLint raton = 0;
 GLint automatico_activado =0;
 GLfloat angulo[3] = {0.0f, 0.0f, 0.0f};
-GLfloat brazo = 0.0f;
-GLfloat color[3] = {1.0f, 1.0f, 1.0f};
-
+GLfloat giro = 0.0f;
+GLint color = 0;
+GLint presionado =0;
 
 void reshape(int width, int height) //checked
 {
@@ -25,117 +25,96 @@ void reshape(int width, int height) //checked
     glMatrixMode(GL_PROJECTION); 
     glLoadIdentity();
 
-    if (hazPerspectiva)
-        gluPerspective(70.0f, (GLfloat)width/(GLfloat)height, 1.0f, 20.0f); //proyección perspecti
-    else
-    {
-      glOrtho(-12,12, -12, 12, 1, 15);
-    }
+  if(hazPerspectiva)
+    gluPerspective(120.0f, (GLfloat)width/(GLfloat)height, 1.f, 20.0f);
+  else       
+    glOrtho(-20,20, -20, 20, 1, 30);
     glMatrixMode(GL_MODELVIEW);
     ancho = width;
     alto = height;
 }
 
 
-
-
 void display(){ 
+
   glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
   glLoadIdentity();
-
-  //Profundidad y angulo de toda la figura
-  glTranslatef(0.0f,0.0f,-10);
-
-  //Rotacion X
+  glTranslatef(0.0f,0.0f,-10.0f);
   glRotatef(angulo[0], 1.0f, 0.0f, 0.0f);
-  //Rotacion Y
   glRotatef(angulo[1], 0.0f, 1.0f, 0.0f);
-  //Rotacion Z
   glRotatef(angulo[2], 0.0f, 0.0f, 1.0f);
 
-  //Base
-  //-----
+ 
   //Cilindro
   glPushMatrix();
   glRotatef(90.0f,1.0f,0.0f,0.0f);
   glColor3f(0.2f, 0.2f, 0.2f);
-  GLUquadric* qobj = gluNewQuadric();
-  gluCylinder(qobj, 5, 5, 1, 32, 32);
+  gluCylinder(gluNewQuadric(), 8, 8, 2, 32, 32);
   glPopMatrix();
 
   //Tapas
-  float alfa;
-  glColor3f(0.7f, 0.7f, 0.7f);
-     
+  glColor3f(0.5f, 0.5f, 0.5f);
   glBegin(GL_POLYGON);
-
-    for (int i = 0; i < 360; i++) {
-        alfa = i * 3.1416 / 180;
-        glVertex3f(5 * cos(alfa), 0.0f, 5 * sin(alfa));
-    }
+  for (int i = 0; i < 360; i++) {
+    glVertex3f(8 * cos(i * 3.1416 / 180), 0.0f, 8 * sin(i * 3.1416 / 180));
+  }
   glEnd();
 
   glPushMatrix();
-  glTranslatef(0.,-1,0.);
+  glTranslatef(0.0f,-1.0f,0.0f);
   glBegin(GL_POLYGON);
-
-    for (int i = 0; i < 360; i++) {
-        alfa = i * 3.1416 / 180;
-        glVertex3f(5 * cos(alfa), 0.0f, 5 * sin(alfa));
-    }
+  for (int i = 0; i < 360; i++) {
+      glVertex3f(8 * cos(i * 3.1416 / 180), -1.0f, 8 * sin(i * 3.1416 / 180));
+  }
   glEnd();
   glPopMatrix();
 
 
   glBegin(GL_TRIANGLES);
-
   //Triángulo Cara 1 
-  glColor3f(0.0, 1.0, 0.5f); 
-  glVertex3f(-0.5 * 9, 0.0f, 0.5 * 1);
-  glVertex3f(0.0f, 5, 0.5 * 1);
-  glVertex3f(0.5 * 9, 0.0f, 0.5 * 1);
+  glColor3f(0.0f, 1.0f, 0.5f); 
+  glVertex3f(-8.0f, 0.0f, 0.5f);
+  glVertex3f(0.0f, 5.0f, 0.5f);
+  glVertex3f(8.0f, 0.0f,0.5f);
 
   //Triángulo Cara 2
-  glColor3f(0.0, 1.0, 0.5f); 
-  glVertex3f(-0.5 * 9, 0.0f, -0.5 * 1);
-  glVertex3f(0.0f, 5, -0.5 * 1);
-  glVertex3f(0.5 * 9, 0.0f, -0.5 * 1);
-
+  glColor3f(0.0f, 1.0f, 0.5f); 
+  glVertex3f(-8.0f, 0.0f, -1.5f);
+  glVertex3f(0.0f, 5.0f, -1.5f);
+  glVertex3f(8.0f, 0.0f, -1.5f);
   glEnd();
 
   glBegin(GL_QUADS);
-
   //Rectángulo 1 
-  glColor3f(0.0, 1.0, 0.0f); 
-  glVertex3f(-0.5 * 9, 0.0f, 0.5 * 1);
-  glVertex3f(0.0f, 5, 0.5 * 1);
-  glVertex3f(0.0f, 5, -0.5 * 1);
-  glVertex3f(-0.5 * 9, 0.0f, -0.5 * 1);
+  glColor3f(0.0f, 1.0f, 0.0f); 
+  glVertex3f(-8.0f, 0.0f, 0.5f);
+  glVertex3f(0.0f, 5.0f, 0.5f);
+  glVertex3f(0.0f, 5.0f, -1.5f);
+  glVertex3f(-8.0f, 0.0f, -1.5f);
 
   //Rectángulo 2
-  glColor3f(0.0, 1.0, 0.0f); 
-  glVertex3f( 0.5 * 9, 0.0f, 0.5 * 1);
-  glVertex3f( 0.0, 5, 0.5 * 1);
-  glVertex3f( 0.0, 5, -0.5 * 1);
-  glVertex3f( 0.5 * 9, 0.0f, -0.5 * 1);
+  glColor3f(0.0f, 1.0f, 0.0f); 
+  glVertex3f( 8.0f, 0.0f, 0.5f);
+  glVertex3f( 0.0f, 5.0f,  0.5f);
+  glVertex3f( 0.0f, 5.0f, -1.5f);
+  glVertex3f( 8.0f, 0.0f, -1.5f);
 
   //Rectángulo 3
-  glColor3f(0.0, 1.0, 0.0f);
-  glVertex3f(-0.5 * 9, 0.0f,  0.5 * 1);
-  glVertex3f( 0.5 * 9, 0.0f,  0.5 * 1);
-  glVertex3f( 0.5 * 9, 0.0f, -0.5 * 1);
-  glVertex3f(-0.5 * 9, 0.0f, -0.5 * 1);
-
+  glColor3f(0.0f, 1.0f, 0.0f);
+  glVertex3f(-8.0f, 0.0f,  0.5f);
+  glVertex3f( 8.0f, 0.0f,  0.5f);
+  glVertex3f( 8.0f, 0.0f, -1.5f);
+  glVertex3f(-8.0f, 0.0f, -1.5f);
   glEnd();
 
   //Brazo
   glPushMatrix();
   //Rotacion Brazo
-  glTranslatef(0,5,0);
-  glRotatef(brazo,0,0,1);
-  glTranslatef(0,-5,0);
+  glTranslatef(0.0f,5.0f,0.0f);
+  glRotatef(giro,0.0f,0.0f,1.0f);
+  glTranslatef(0.0f,-5.0f,0.0f);
     //Brazo
-  glColor3f(0.7f, 0.1f, 0.7f);
+  glColor3f(0.0f, 1.0f, 1.0f);
   glPushMatrix();
   glTranslatef(0.0f,3.0f,0.75f);
   glScalef(1.0f,8.0f,1.0f);
@@ -143,10 +122,10 @@ void display(){
   glPopMatrix();
 
   //Mano
-  glColor3f(0.7f, 0.1f, 0.2f);
-  glPushMatrix(); //-
-  glTranslatef(0.,1.,2.);
-  glRotatef(-brazo,0,0,1);
+  glColor3f(0.0f, 0.5f, 1.0f);
+  glPushMatrix();
+  glTranslatef(0.0f,1.0f,2.0f);
+  glRotatef(-giro,0.0f,0.0f,1.0f);
 
   glPushMatrix();
   glScalef(1.0f,0.25f,1.0f);
@@ -154,25 +133,32 @@ void display(){
   glPopMatrix();
 
   //Personas
-  glColor3f(color[0], color[1], color[2]);
-
+  if(color == 0){
+  glColor3f(1.0f, 1.0f, 1.0f);
+  }else if(color == 1){
+  glColor3f(1.0f, 1.0f, 0.0f);
+  }else if(color == 2){
+    glColor3f(1.0f, 0.5f, 0.0f);
+  }else if(color == 3){
+    glColor3f(0.0f, 1.0f, 0.5f);
+  }
   glPushMatrix();
-  glTranslatef(-0.5,0.5,0.5);
+  glTranslatef(-0.5f,0.5f,0.5f);
   glutSolidCube(.5);
   glPopMatrix();
 
   glPushMatrix();
-  glTranslatef(-0.5,0.5,-0.5);
+  glTranslatef(-0.5f,0.5f,-0.5f);
   glutSolidCube(0.5);
   glPopMatrix();
 
   glPushMatrix();
-  glTranslatef(0.5,0.5,0.5);
+  glTranslatef(0.5f,0.5f,0.5f);
   glutSolidCube(0.5);
   glPopMatrix();
 
   glPushMatrix();
-  glTranslatef(0.5,0.5,-0.5);
+  glTranslatef(0.5f,0.5f,-0.5f);
   glutSolidCube(0.5);
   glPopMatrix();
 
@@ -180,11 +166,11 @@ void display(){
   glPopMatrix(); 
   glPopMatrix();
 
-  glFlush();
+//glFlush();
   glutSwapBuffers();
 
-
 }
+
 void mouse(int boton, int estado, int x, int y){ //checked
   if (boton==GLUT_LEFT_BUTTON){
     if (glutGetModifiers() == GLUT_ACTIVE_CTRL)  
@@ -199,7 +185,7 @@ void mover_con_mouse(int x, int y) {  //checked
     int deltaX = x - lastX;
     int deltaY = y - lastY;
     if (raton == 1) { 
-        angulo[0]+= deltaY;
+        angulo[0] += deltaY;
         angulo[0] += deltaX;
     } else { 
         angulo[1]+= deltaY;
@@ -216,54 +202,56 @@ void keyboard(unsigned char key, int x, int y ){
 
   switch(key){
   
-    case 'G':
-    case 'g':
-      if (automatico_activado==1){
-        automatico_activado=0;
-        brazo=0;
+    case 'S':
+    case 's':
+      if (automatico_activado==0){
+        automatico_activado=1;
+        giro=1;
       } else
-        automatico_activado=1;    
+        automatico_activado=0;   
+        giro=0; 
       break;
     
-    //Perspectiva 
-    case 'p':
-    case 'P':
-    case 'o':
+   case 'P':
+   case 'p':
+      hazPerspectiva=1;
+      reshape(ancho,alto);
+      break;
+ 
     case 'O':
-      if (hazPerspectiva==1)
-        hazPerspectiva=0;
-      else
-        hazPerspectiva=1;
+    case 'o':
+      hazPerspectiva=0;
       reshape(ancho,alto);
       break;
     
-    //Invertir 
-    case 'H':
-    case 'h':
-      vel2=-vel2;
+    case 'R':
+    case 'r':
+      
+      vel2= -vel2;
+      presionado += 1;
+      if(presionado ==2){
+        presionado = 0;
+      }
       break;
 
-    //Mover 
-    //X
     case 'Q':
     case 'q':
-      angulo[0]=angulo[0]+vel2;
+      angulo[0]+=vel2;
       break;
     
     case 'A':
     case 'a':
-      angulo[0]=angulo[0]-vel2;
+      angulo[0]-=vel2;
       break;
     
-    //Y
     case 'W':
     case 'w':
-      angulo[1]=angulo[1]+vel2;
+      angulo[1]+=vel2;
       break;
     
-    case 'S':
-    case 's':    
-      angulo[1]=angulo[1]-vel2;
+    case 'E':
+    case 'e':    
+      angulo[1]-=vel2;
       break; 
 
     default:
@@ -273,46 +261,42 @@ void keyboard(unsigned char key, int x, int y ){
 
 
 void movimiento(int opcion){ //checked
-  automatico_activado=opcion;
+  automatico_activado = opcion;
 }
 
 void forma(int opcion) {
     switch (opcion) {
     case 0:
-        color[0] = 1.0;
-        color[1] = 1.0;
-        color[2] = 1.0; // Blanco
+        color = 0;
         break;
-
     case 1:
-        color[0] = 1.0;
-        color[1] = 1.0;
-        color[2] = 0.0; // Amarillo
+        color = 1;
         break;
-
     case 2:
-        color[0] = 1.0;
-        color[1] = 0.5;
-        color[2] = 0.0; // Naranja
+        color = 2;
         break;
-
     case 3:
-        color[0] = 0.0;
-        color[1] = 1.0;
-        color[2] = 0.5; // Verde
+        color = 3;
         break;
     }
 }
 void menu( int opcion){  //checked
-  if (opcion==0)
+  if (opcion == 0)
     exit(-1);
 }
 
 float obtenerRotacion() {
   if (automatico_activado == 1) {
     float increment = vel2;
-    if (fabs(brazo) > 180) {
+    if(presionado == 0){ 
+    if (giro > 180) {
       increment = 2 * vel2;
+    }
+    }else if(presionado == 1){
+      if (giro < 180) {
+      increment = 2 * vel2;
+    }
+
     }
     return increment;
   } else {
@@ -322,32 +306,33 @@ float obtenerRotacion() {
 
 void ajuste() { 
   if (automatico_activado == 1) {
-    brazo += obtenerRotacion(); // Incrementa el ángulo
+    giro += obtenerRotacion(); // Incrementa el ángulo
     
     // Ajusta el ángulo para mantenerlo en el rango [0, 360]
-    if (brazo >= 360) {
-      brazo -= 360;
-    } else if (brazo < 0) {
-      brazo += 360;
+    if (giro >= 360) {
+      giro -= 360;
+    } else if (giro < 0) {
+      giro += 360;
     }
   }
   glutPostRedisplay();
-  glutTimerFunc(50, ajuste, 0);
+  glutTimerFunc(vel, ajuste, 0);
 }
 
 
 void velocidad(int opcion){ //checked
   switch (opcion){
     case 0:
-      vel2=30;
+   
+      vel=20;
       break;
 
     case 1:
-      vel2=15;
+      vel=50;
       break;
 
     case 2:
-      vel2=5;
+      vel=90;
       break;
   }
 }
@@ -370,12 +355,12 @@ int main(int argc, char** argv) //checked
     glutInitDisplayMode(GLUT_DOUBLE | GLUT_RGB | GLUT_DEPTH); //activamos también z-buffer
     glutInitWindowPosition(100, 100);
     glutInitWindowSize(alto, ancho);
-    glutCreateWindow("Ejercicio Practicas"); //Crea la ventana
+    glutCreateWindow("Examen CGV"); //Crea la ventana
     init();
     glutDisplayFunc(display); //función de control de render
     glutReshapeFunc(reshape); //función de control de cambio  de tamaño de ventana 
     //glutIdleFunc(idle); //función que se activa cuando no hacemos nada
-    glutTimerFunc(50, ajuste,0); //funcion de timer
+    glutTimerFunc(vel, ajuste,0); //funcion de timer
     glutKeyboardFunc(keyboard); //función de control de eventos con el teclado
     glutMouseFunc(mouse);
     glutMotionFunc(mover_con_mouse);
@@ -391,6 +376,7 @@ int main(int argc, char** argv) //checked
     glutAddMenuEntry("Medio", 1);
     glutAddMenuEntry("Lento", 2);
     glutCreateMenu(menu);
+
     //Titulos de los menus
     glutAddSubMenu("Cambio de color",f); 
     glutAddSubMenu("Cambio Velocidad",v);
