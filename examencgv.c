@@ -5,7 +5,7 @@
 #include <GL/gl.h>
 #include <GL/glu.h>
 #include <GL/glut.h>
-
+#define PI 3.141592653
 GLint ancho = 800;
 GLint alto = 800;
 GLfloat vel2=5.0f;
@@ -44,24 +44,24 @@ void display(){
   glRotatef(angulo[1], 0.0f, 1.0f, 0.0f); //Rotación en Y
   glRotatef(angulo[2], 0.0f, 0.0f, 1.0f); //Rotación en Z
 
-  //Base de la noria
+  //Base 
   glPushMatrix();
   glRotatef(90.0f,1.0f,0.0f,0.0f);
   glColor3f(0.3f, 0.3f, 0.3f);
-  gluCylinder(gluNewQuadric(), 8, 8, 2, 32, 32); //Hacemos un cilindo de altura 2
+  gluCylinder(gluNewQuadric(), 8, 8, 2, 22, 22); //Hacemos un cilindo de altura 2
   glPopMatrix();
 
   glColor3f(0.5f, 0.5f, 0.5f);
   glBegin(GL_POLYGON);
   for (int i = 0; i < 360; i++) { //Primera cubierta (mismo radio que el cilindro para cerrarlo)
-    glVertex3f(8 * cos(i * 3.1416 / 180), 0.0f, 8 * sin(i * 3.1416 / 180));
+    glVertex3f(8 * cos(i * PI / 180), 0.0f, 8 * sin(i * PI / 180));
   }
   glEnd();
   glPushMatrix();
   glTranslatef(0.0f,-1.0f,0.0f);
   glBegin(GL_POLYGON);
   for (int i = 0; i < 360; i++) { //Segunda cubierta
-      glVertex3f(8 * cos(i * 3.1416 / 180), -1.0f, 8 * sin(i * 3.1416 / 180));
+      glVertex3f(8 * cos(i * PI / 180), -1.0f, 8 * sin(i * PI / 180));
   }
   glEnd();
   glPopMatrix();
