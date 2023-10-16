@@ -301,19 +301,15 @@ float increment = (automatico_activado == 1) ?
   return increment;
 }
 
-void ajuste() { 
+void ajuste() {
   if (automatico_activado == 1) {
     giro += obtenerRotacion(); // Incrementa el ángulo
-    
+
     // Ajusta el ángulo para mantenerlo en el rango [0, 360]
-    if (giro >= 360) {
-      giro -= 360;
-    } else if (giro < 0) {
-      giro += 360;
-    }
+    giro = (giro >= 360) ? giro - 360 : (giro < 0) ? giro + 360 : giro;
   }
   glutPostRedisplay();
-  glutTimerFunc(vel, ajuste, 0); //Función de timer
+  glutTimerFunc(vel, ajuste, 0); // Función de timer
 }
 
 
