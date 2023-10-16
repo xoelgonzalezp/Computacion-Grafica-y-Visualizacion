@@ -28,7 +28,7 @@ void reshape(int width, int height)
   if(hazPerspectiva)
     gluPerspective(120.0f, (GLfloat)width/(GLfloat)height, 1.f, 20.0f); //Proyección perspectiva
   else       
-    glOrtho(-20,20, -20, 20, 1, 20); //Proyección ortogonal
+    glOrtho(-20,20, -20, 20, 1, 25); //Proyección ortogonal
     glMatrixMode(GL_MODELVIEW);
     ancho = width;
     alto = height;
@@ -70,7 +70,7 @@ void display(){
   //Noria
   //Cara 1 
   glBegin(GL_TRIANGLES);
-  glColor3f(0.0f, 1.0f, 0.5f); 
+  glColor3f(0.0f, 1.0f, 0.5f);  //Hacemos las caras verdes
   glVertex3f(-8.0f, 0.0f, 0.5f);
   glVertex3f(0.0f, 5.0f, 0.5f);
   glVertex3f(8.0f, 0.0f,0.5f);
@@ -118,7 +118,7 @@ void display(){
   glColor3f(0.0f, 1.0f, 1.0f);
   glPushMatrix();
   glTranslatef(0.0f,3.0f,0.75f);
-  glScalef(1.0f,8.0f,1.0f);
+  glScalef(2.0f,8.0f,1.0f);
   glutSolidCube(0.5f);
   glPopMatrix();
 
@@ -128,8 +128,8 @@ void display(){
   glTranslatef(0.0f,1.0f,2.0f);
   glRotatef(-giro,0.0f,0.0f,1.0f);
   glPushMatrix();
-  glScalef(1.0f,0.25f,1.0f);
-  glutSolidCube(2);
+  glScalef(2.0f,1.0f,2.0f);
+  glutSolidCube(1);
   glPopMatrix();
 
   //Color de los cubos del vagón
@@ -145,25 +145,25 @@ void display(){
 
   //Cubo 1
   glPushMatrix();
-  glTranslatef(-0.5f,0.5f,0.5f);
+  glTranslatef(-0.5f,0.75f,0.5f);
   glutSolidCube(0.5f);
   glPopMatrix();
 
   //Cubo 2
   glPushMatrix();
-  glTranslatef(-0.5f,0.5f,-0.5f);
+  glTranslatef(-0.5f,0.75f,-0.5f);
   glutSolidCube(0.5f);
   glPopMatrix();
   
   //Cubo 3
   glPushMatrix();
-  glTranslatef(0.5f,0.5f,0.5f);
+  glTranslatef(0.5f,0.75f,0.5f);
   glutSolidCube(0.5f);
   glPopMatrix();
 
   //Cubo 4
   glPushMatrix();
-  glTranslatef(0.5f,0.5f,-0.5f);
+  glTranslatef(0.5f,0.75f,-0.5f);
   glutSolidCube(0.5f);
   glPopMatrix();
 
@@ -235,7 +235,7 @@ void keyboard(unsigned char key, int x, int y ){ //Función para controlar el us
     case 'r':
       vel2= -vel2;
       invertir += 1;
-      if(invertir ==2){
+      if(invertir ==2){ //si el contador llega a dos, vuelve a girar en el sentido del inicio
         invertir = 0;
       }
       break;
@@ -287,25 +287,18 @@ void menu( int opcion){
   }
 }
 
-float obtenerRotacion() {
-  if (automatico_activado == 1) {
-    float increment = vel2;
-    if(invertir == 0){   //Si no se ha presionado la tecla de invertir, 
-                        //cuando el giro sea de más de 180 grados, duplica la velocidad
-    if (giro > 180) {
-      increment = 2 * vel2;
-    }
-    }else if(invertir == 1){ //Si no se ha presionado la tecla de invertir, 
-                            //cuando el giro sea de menos de 180 grados, duplica la velocidad
-      if (giro < 180) {
-      increment = 2 * vel2;
-    }
 
-    }
-    return increment;
-  } else {
-    return 0.0; // Devuelve 0 si el automático no está activado
-  }
+float obtenerRotacion() { 
+/*Si no se ha presionado la tecla de invertir, 
+cuando el giro sea de más de 180 grados, duplica la velocidad
+Si se ha presionado la tecla de invertir, 
+cuando el giro sea de menos de 180 grados, duplica la velocidad
+Devuelve 0 si el automático no está activado*/
+
+float increment = (automatico_activado == 1) ? 
+  ((invertir == 0 && giro > 180) || (invertir == 1 && giro < 180)) ? 2 * vel2 : vel2 
+    : 0.0;
+  return increment;
 }
 
 void ajuste() { 
